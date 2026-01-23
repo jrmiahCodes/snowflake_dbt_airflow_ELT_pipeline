@@ -1,45 +1,92 @@
-Overview
-========
+# ❄️ Snowflake ELT Pipeline with dbt & Airflow
 
-Welcome to Astronomer! This project was generated after you ran 'astro dev init' using the Astronomer CLI. This readme describes the contents of the project, as well as how to run Apache Airflow on your local machine.
+![Snowflake](https://img.shields.io/badge/Warehouse-Snowflake-blue)
+![dbt](https://img.shields.io/badge/Transform-dbt-orange)
+![Airflow](https://img.shields.io/badge/Orchestration-Airflow-red)
+![SQL](https://img.shields.io/badge/Language-SQL-lightgrey)
 
-Project Contents
-================
+## 📌 Overview
 
-Your Astro project contains the following files and folders:
+This project showcases a **modern ELT pipeline** built on **Snowflake**, using **dbt** for transformations and data quality, and **Airflow** for orchestration.
 
-- dags: This folder contains the Python files for your Airflow DAGs. By default, this directory includes one example DAG:
-    - `example_astronauts`: This DAG shows a simple ETL pipeline example that queries the list of astronauts currently in space from the Open Notify API and prints a statement for each astronaut. The DAG uses the TaskFlow API to define tasks in Python, and dynamic task mapping to dynamically print a statement for each astronaut. For more on how this DAG works, see our [Getting started tutorial](https://www.astronomer.io/docs/learn/get-started-with-airflow).
-- Dockerfile: This file contains a versioned Astro Runtime Docker image that provides a differentiated Airflow experience. If you want to execute other commands or overrides at runtime, specify them here.
-- include: This folder contains any additional files that you want to include as part of your project. It is empty by default.
-- packages.txt: Install OS-level packages needed for your project by adding them to this file. It is empty by default.
-- requirements.txt: Install Python packages needed for your project by adding them to this file. It is empty by default.
-- plugins: Add custom or community plugins for your project to this file. It is empty by default.
-- airflow_settings.yaml: Use this local-only file to specify Airflow Connections, Variables, and Pools instead of entering them in the Airflow UI as you develop DAGs in this project.
+The pipeline transforms raw source data into **analytics-ready fact and dimensional models** following analytics engineering best practices.
 
-Deploy Your Project Locally
-===========================
+---
 
-Start Airflow on your local machine by running 'astro dev start'.
+## 🏗 Architecture
 
-This command will spin up five Docker containers on your machine, each for a different Airflow component:
+**Flow:** 
+![Architecture Diagram](docs/elt_pipeline.png)
+**Sources → Raw/Landing → Staging → Analytics/Marts → Consumers**
 
-- Postgres: Airflow's Metadata Database
-- Scheduler: The Airflow component responsible for monitoring and triggering tasks
-- DAG Processor: The Airflow component responsible for parsing DAGs
-- API Server: The Airflow component responsible for serving the Airflow UI and API
-- Triggerer: The Airflow component responsible for triggering deferred tasks
+---
 
-When all five containers are ready the command will open the browser to the Airflow UI at http://localhost:8080/. You should also be able to access your Postgres Database at 'localhost:5432/postgres' with username 'postgres' and password 'postgres'.
+## 🧱 Data Layers
 
-Note: If you already have either of the above ports allocated, you can either [stop your existing Docker containers or change the port](https://www.astronomer.io/docs/astro/cli/troubleshoot-locally#ports-are-not-available-for-my-local-airflow-webserver).
+### 🔹 Raw / Landing
+- Source-aligned tables loaded *as-is*
+- No business logic applied
+- dbt `sources` defined here
+- RBAC boundaries established
 
-Deploy Your Project to Astronomer
-=================================
+### 🔹 Staging (`stg_*`, `int_*`)
+- Cleaning, type casting, and normalization
+- Business logic and transformations
+- Intermediate aggregations
+- Entity relationships defined
 
-If you have an Astronomer account, pushing code to a Deployment on Astronomer is simple. For deploying instructions, refer to Astronomer documentation: https://www.astronomer.io/docs/astro/deploy-code/
+### 🔹 Analytics / Marts (`fct_*`, `dim_*`)
+- Fact and dimensional models
+- Business-facing metrics
+- dbt tests for data quality
+- Optimized for BI and downstream analytics
 
-Contact
-=======
+---
 
-The Astronomer CLI is maintained with love by the Astronomer team. To report a bug or suggest a change, reach out to our support.
+## 🔄 Orchestration
+
+- **Airflow** schedules and orchestrates dbt runs
+- Handles retries and execution order
+- Decoupled from transformation logic
+
+---
+
+## ✅ Data Quality & Governance
+
+- dbt tests for:
+  - Uniqueness
+  - Not-null constraints
+  - Referential integrity
+- Built-in lineage and documentation via dbt
+
+---
+
+## 📊 Consumers
+
+- BI tools
+- Ad-hoc analytics
+- AI/ML workloads
+
+---
+
+## 🧠 Skills Demonstrated
+
+- Snowflake data warehousing
+- ELT architecture
+- dbt modeling, testing, and macros
+- Fact & dimensional modeling
+- Airflow orchestration
+- Analytics engineering best practices
+
+---
+
+## 🚀 Why This Project
+
+- Warehouse-native ELT design
+- Clear separation of concerns
+- Scalable and maintainable transformations
+- Business-ready analytical outputs
+
+## 🛡️ License
+
+This project is licensed under the [MIT License](LICENSE). You are free to use, modify, and share this project with proper attribution.
